@@ -1,0 +1,8 @@
+/dist
+/node_modules
+/bin
+.eslintrc.js
+package-lock.json
+package.json
+tsconfig.json
+ecosystem.config.js
