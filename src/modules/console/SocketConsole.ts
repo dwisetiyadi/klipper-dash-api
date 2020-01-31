@@ -23,16 +23,20 @@ export default (socket: socketIO.Socket) => {
   Port.pipe(Parser);
   Parser.on('data', (line: any) => socket.emit('gcodeResponse', SocketResponse(200, line)));
 
+  Port.open((err) => {
+    if (err) return socket.emit('gcodeResponse', SocketResponse(500, err.message));
+  });
+
   // gcode command handle
   socket.on('gcode', (message: string) => {
-    Port.open((err) => {
+    Port.on('open', (err) => {
       if (err) return socket.emit('gcodeResponse', SocketResponse(500, err.message));
       Port.write(`${message}\n`, (err) => err ? socket.emit('gcodeResponse', SocketResponse(500, err.message)) : '');
     });
   });
 
   setInterval(() => {
-    Port.open((err) => {
+    Port.on('open', (err) => {
       if (err) return socket.emit('gcodeResponse', SocketResponse(501, err.message));
       Port.write(`M105\n`, (err) => err ? socket.emit('gcodeResponse', SocketResponse(501, err.message)) : '');
     });
