@@ -6,7 +6,7 @@ import socketIO from 'socket.io';
 import SocketConsoleModule from '../modules/console/SocketConsole';
 
 export default (socket: socketIO.Socket) => {
-  socket.setMaxListeners(100);
+  socket.setMaxListeners(0);
   console.log(`socketId ${socket.id} connected`);
 
   // socket on modules
