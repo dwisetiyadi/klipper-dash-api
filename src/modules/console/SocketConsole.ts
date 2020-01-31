@@ -27,6 +27,8 @@ export default (socket: socketIO.Socket) => {
     if (err) return socket.emit('gcodeResponse', SocketResponse(500, err.message));
   });
 
+  Port.setMaxListeners(0);
+
   // gcode command handle
   socket.on('gcode', (message: string) => {
     Port.on('open', (err) => {
