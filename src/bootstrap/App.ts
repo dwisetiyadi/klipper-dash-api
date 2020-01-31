@@ -21,7 +21,7 @@ import {
 const App = async (): Promise<void> => {
   const server = new Hapi.Server({
     host: process.env.HOST,
-    port: 3001,
+    port: process.env.PORT,
     routes: { 
       cors: Cors,
     },
