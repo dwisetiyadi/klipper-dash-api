@@ -20,31 +20,32 @@ export default (socket: socketIO.Socket) => {
   );
   const Parser = new Readline();
 
+  socket.on('klipper_dash_connection', (message: string) => {
+    if (message === 'open') {
+      Port.open((err) => {
+        if (err) {
+          socket.emit('gcodeResponse', SocketResponse(500, err.message));
+          return;
+        }
+        socket.emit('gcodeResponse', SocketResponse(200, 'ok serial connected'));
+      });
+    }
+  });
+
   Port.pipe(Parser);
-  Parser.on('data', (line: any) => socket.emit('gcodeResponse', SocketResponse(200, line)));
 
-  Port.open((err) => {
-    if (err) return socket.emit('gcodeResponse', SocketResponse(500, err.message));
+  Parser.on('data', (line: any) => {
+    socket.emit('gcodeResponse', SocketResponse(200, line));
   });
 
-  Port.setMaxListeners(0);
-
-  // gcode command handle
   socket.on('gcode', (message: string) => {
-    Port.on('open', (err) => {
-      if (err) return socket.emit('gcodeResponse', SocketResponse(500, err.message));
-      Port.write(`${message}\n`, (err) => err ? socket.emit('gcodeResponse', SocketResponse(500, err.message)) : '');
+    Port.on('open', () => {
+      Port.write(`${message}\n`);
     });
   });
-
-  setInterval(() => {
-    Port.on('open', (err) => {
-      if (err) return socket.emit('gcodeResponse', SocketResponse(501, err.message));
-      Port.write(`M105\n`, (err) => err ? socket.emit('gcodeResponse', SocketResponse(501, err.message)) : '');
-    });
-  }, 1000);
 
   Port.on('error', (err) => {
-    if (err) return socket.emit('gcodeResponse', SocketResponse(500, err.message));
+    socket.emit('gcodeResponse', SocketResponse(500, err.message));
+    console.log(err.message);
   });
 };
