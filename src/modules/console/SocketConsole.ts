@@ -21,13 +21,13 @@ const onPortWrite = (socket: socketIO.Socket, port: any, gcode?: string) => {
     if (err) {
       const isPortConnectionError = onPortConnectionError(socket, err);
       if (isPortConnectionError) return socket.emit('gcodeResponse', SocketResponse(500, err.message));
-
-      port.on('open', () => {
-        port.write(`${gcode}\n`);
-      });
       return;
     }
     
+    port.write(`${gcode}\n`);
+  });
+  
+  port.on('open', () => {
     port.write(`${gcode}\n`);
   });
 };
@@ -42,7 +42,7 @@ export default (socket: socketIO.Socket) => {
   const Parser = new Readline();
 
   socket.on('klipper_dash_connection', (message: string) => {
-    if (message === 'open') onPortWrite(socket, Port, message);
+    if (message === 'open') onPortWrite(socket, Port);
   });
 
   Port.pipe(Parser);
