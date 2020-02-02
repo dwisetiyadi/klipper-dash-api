@@ -11,11 +11,28 @@ import {
   SocketResponse,
 } from '../../utilities';
 
-const onPortError = (socket: socketIO.Socket, err: any) => {
+const onPortError = (socket: socketIO.Socket, err: any, code?: number) => {
   if (err) {
-    socket.emit('gcodeResponse', SocketResponse(500, err.message));
-    return;
+    if ([...err.message.matchAll(/Port is already open/gm)].length > 0) return false;
+    socket.emit('gcodeResponse', SocketResponse(code || 500, err.message));
+    return true;
   }
+
+  return false;
+};
+
+const onPortWrite = (socket: socketIO.Socket, port: any, gcode?: string) => {
+  port.open((err: any) => {
+    const isError = onPortError(socket, err);
+    if (!isError) {
+      if (!gcode) {
+        socket.emit('gcodeResponse', SocketResponse(200, 'ok serial connected'));
+        return;
+      }
+
+      port.write(`${gcode}\n`);
+    }
+  });
 };
 
 export default (socket: socketIO.Socket) => {
@@ -28,12 +45,7 @@ export default (socket: socketIO.Socket) => {
   const Parser = new Readline();
 
   socket.on('klipper_dash_connection', (message: string) => {
-    if (message === 'open') {
-      Port.open((err) => {
-        onPortError(socket, err);
-        socket.emit('gcodeResponse', SocketResponse(200, 'ok serial connected'));
-      });
-    }
+    if (message === 'open') onPortWrite(socket, Port);
   });
 
   Port.pipe(Parser);
@@ -43,14 +55,10 @@ export default (socket: socketIO.Socket) => {
   });
 
   socket.on('gcode', (message: string) => {
-    Port.open((err) => {
-      onPortError(socket, err);
-      Port.write(`${message}\n`);
-    });
+    onPortWrite(socket, Port, message);
   });
 
   Port.on('error', (err) => {
     socket.emit('gcodeResponse', SocketResponse(500, err.message));
-    console.log(err.message);
   });
 };
