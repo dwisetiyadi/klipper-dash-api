@@ -22,8 +22,9 @@ const onPortWrite = (socket: socketIO.Socket, port: any, gcode?: string) => {
       const isPortConnectionError = onPortConnectionError(socket, err);
       if (isPortConnectionError) return socket.emit('gcodeResponse', SocketResponse(500, err.message));
     }
-    
-    port.write(`${gcode}\n`);
+
+    if (gcode) return port.write(`${gcode}\n`);
+    socket.emit('gcodeResponse', SocketResponse(500, 'ok Klipper connected'));
   });
 };
 
