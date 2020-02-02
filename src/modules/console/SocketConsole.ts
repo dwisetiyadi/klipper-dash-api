@@ -26,7 +26,7 @@ const onPortWrite = (socket: socketIO.Socket, port: any, gcode?: string) => {
     
     port.write(`${gcode}\n`);
   });
-  
+
   port.on('open', () => {
     port.write(`${gcode}\n`);
   });
@@ -52,6 +52,7 @@ export default (socket: socketIO.Socket) => {
   });
 
   socket.on('gcode', (message: string) => {
+    console.log(message);
     onPortWrite(socket, Port, message);
   });
 
