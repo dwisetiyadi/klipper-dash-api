@@ -23,15 +23,14 @@ const writeGcode = (socket: socketIO.Socket, port: any, gcode: string) => {
     if (err) {
       const errConn = [...err.message.matchAll(/Port is already open/gm)];
       if (errConn.length > 0) {
-        port.on('open', () => {
-          writeGcodeDo(socket, port, gcode);
-        });
+        writeGcodeDo(socket, port, gcode);
         return;
       }
-      
+
       socket.emit('gcodeResponse', SocketResponse(500, err.message));
       return;
     }
+    
     writeGcodeDo(socket, port, gcode);
   });
 };
