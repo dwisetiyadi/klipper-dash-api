@@ -18,10 +18,10 @@ const onPortConnectionError = (socket: socketIO.Socket, err: any) => {
 
 const onPortWrite = (socket: socketIO.Socket, port: any, gcode?: string) => {
   port.open((err: any) => {
-    const isPortConnectionError = onPortConnectionError(socket, err);
-    if (isPortConnectionError) return socket.emit('gcodeResponse', SocketResponse(500, err.message));
-    
     if (err) {
+      const isPortConnectionError = onPortConnectionError(socket, err);
+      if (isPortConnectionError) return socket.emit('gcodeResponse', SocketResponse(500, err.message));
+
       port.on('open', () => {
         port.write(`${gcode}\n`);
       });
@@ -42,7 +42,7 @@ export default (socket: socketIO.Socket) => {
   const Parser = new Readline();
 
   socket.on('klipper_dash_connection', (message: string) => {
-    if (message === 'open') onPortWrite(socket, Port);
+    if (message === 'open') onPortWrite(socket, Port, message);
   });
 
   Port.pipe(Parser);
