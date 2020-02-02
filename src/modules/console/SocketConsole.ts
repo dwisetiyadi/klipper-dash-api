@@ -11,6 +11,20 @@ import {
   SocketResponse,
 } from '../../utilities';
 
+const writeGcode = (socket: socketIO.Socket, port: any, gcode: string) => {
+  port.open((err: any) => {
+    if (err) {
+      socket.emit('gcodeResponse', SocketResponse(500, err.message));
+      return;
+    }
+    if (gcode !== '') {
+      port.write(`${gcode}\n`);
+    } else {
+      socket.emit('gcodeResponse', SocketResponse(200, 'ok serial connected'));
+    }
+  });
+};
+
 export default (socket: socketIO.Socket) => {
   const Port = new SerialPort(Data.printer.connection.port,
     {
@@ -21,15 +35,7 @@ export default (socket: socketIO.Socket) => {
   const Parser = new Readline();
 
   socket.on('klipper_dash_connection', (message: string) => {
-    if (message === 'open') {
-      Port.open((err) => {
-        if (err) {
-          socket.emit('gcodeResponse', SocketResponse(500, err.message));
-          return;
-        }
-        socket.emit('gcodeResponse', SocketResponse(200, 'ok serial connected'));
-      });
-    }
+    if (message === 'open') writeGcode(socket, Port, '');
   });
 
   Port.pipe(Parser);
@@ -39,9 +45,7 @@ export default (socket: socketIO.Socket) => {
   });
 
   socket.on('gcode', (message: string) => {
-    Port.on('open', () => {
-      Port.write(`${message}\n`);
-    });
+    writeGcode(socket, Port, message);
   });
 
   Port.on('error', (err) => {
