@@ -11,27 +11,24 @@ import {
   SocketResponse,
 } from '../../utilities';
 
-const onPortError = (socket: socketIO.Socket, err: any, code?: number) => {
-  if (err) {
-    if ([...err.message.matchAll(/Port is already open/gm)].length > 0) return false;
-    socket.emit('gcodeResponse', SocketResponse(code || 500, err.message));
-    return true;
-  }
-
+const onPortConnectionError = (socket: socketIO.Socket, err: any) => {
+  if ([...err.message.matchAll(/Error: No such file or directory, cannot open/gm)].length > 0) return true;
   return false;
 };
 
 const onPortWrite = (socket: socketIO.Socket, port: any, gcode?: string) => {
   port.open((err: any) => {
-    const isError = onPortError(socket, err);
-    if (!isError) {
-      if (!gcode) {
-        socket.emit('gcodeResponse', SocketResponse(200, 'ok serial connected'));
-        return;
-      }
-
-      port.write(`${gcode}\n`);
+    const isPortConnectionError = onPortConnectionError(socket, err);
+    if (isPortConnectionError) return socket.emit('gcodeResponse', SocketResponse(500, err.message));
+    
+    if (err) {
+      port.on('open', () => {
+        port.write(`${gcode}\n`);
+      });
+      return;
     }
+    
+    port.write(`${gcode}\n`);
   });
 };
 
