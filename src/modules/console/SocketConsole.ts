@@ -23,14 +23,15 @@ const onPortWrite = (socket: socketIO.Socket, port: any, gcode?: string) => {
     if (err) {
       const isPortConnectionError = onPortConnectionError(socket, err);
       if (isPortConnectionError) return socket.emit('gcodeResponse', SocketResponse(500, err.message));
-      console.log('error: ', err.message);
+
+      port.on('open', () => {
+        console.log('error: ', err.message);
+        port.write(`${gcode}\n`);
+      });
+      
       return;
     }
     
-    port.write(`${gcode}\n`);
-  });
-
-  port.on('open', () => {
     port.write(`${gcode}\n`);
   });
 };
