@@ -11,17 +11,28 @@ import {
   SocketResponse,
 } from '../../utilities';
 
+const writeGcodeDo = (socket: socketIO.Socket, port: any, gcode: string) => {
+  if (gcode !== '') {
+    port.write(`${gcode}\n`);
+  } else {
+    socket.emit('gcodeResponse', SocketResponse(200, 'ok serial connected'));
+  }
+};
 const writeGcode = (socket: socketIO.Socket, port: any, gcode: string) => {
   port.open((err: any) => {
     if (err) {
+      const errConn = [...err.message.matchAll(/Port is already open/gm)];
+      if (errConn.length > 0) {
+        port.on('open', () => {
+          writeGcodeDo(socket, port, gcode);
+        });
+        return;
+      }
+      
       socket.emit('gcodeResponse', SocketResponse(500, err.message));
       return;
     }
-    if (gcode !== '') {
-      port.write(`${gcode}\n`);
-    } else {
-      socket.emit('gcodeResponse', SocketResponse(200, 'ok serial connected'));
-    }
+    writeGcodeDo(socket, port, gcode);
   });
 };
 
