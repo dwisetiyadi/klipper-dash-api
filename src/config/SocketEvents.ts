@@ -24,5 +24,6 @@ export default (socket: socketIO.Socket, port: any, parser: any) => {
     console.log(`socketId ${socket.id} disconnected`);
     const i = allClients.indexOf(socket);
     allClients.splice(i, 1);
+    console.log(allClients);
   });
 };
