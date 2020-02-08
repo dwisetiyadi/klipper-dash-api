@@ -16,7 +16,7 @@ const onPortConnectionError = (socket: socketIO.Socket, err: any) => {
   return false;
 };
 
-const onPortWrite = (socket: socketIO.Socket, port, gcode?: string) => {
+const onPortWrite = (socket: socketIO.Socket, port: any, gcode?: string) => {
   port.open((err: any) => {
     if (err) {
       const isPortConnectionError = onPortConnectionError(socket, err);
