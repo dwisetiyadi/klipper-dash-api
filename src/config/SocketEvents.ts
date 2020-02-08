@@ -6,7 +6,7 @@ import socketIO from 'socket.io';
 
 import {
   SocketResponse,
-} from '../../utilities';
+} from '../utilities';
 
 const onPortConnectionError = (socket: socketIO.Socket, err: any) => {
   if ([...err.message.matchAll(/Error: No such file or directory, cannot open/gm)].length > 0) return true;
