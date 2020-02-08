@@ -8,6 +8,9 @@ import * as Hapi from '@hapi/hapi';
 import 'dotenv/config';
 import "reflect-metadata";
 import socketIO from 'socket.io';
+import SerialPort from 'serialport';
+import Readline from '@serialport/parser-readline';
+import * as Data from '../../config/Application.json';
 import {
   Plugins,
   Router,
@@ -17,6 +20,15 @@ import {
   SocketMidlewares,
 } from '../config';
 // import { getConnectionMinio } from '../utilities';
+
+const Port = new SerialPort(Data.printer.connection.port,
+  {
+    baudRate: Data.printer.connection.baudrate,
+    autoOpen: false,
+  },
+);
+
+const Parser = new Readline();
 
 const App = async (): Promise<void> => {
   const server = new Hapi.Server({
@@ -38,7 +50,7 @@ const App = async (): Promise<void> => {
     pingTimeout: 120000,
   }).of(namespace);
   io.use((socket: socketIO.Socket, next) => { SocketMidlewares(socket, next); });
-  io.on('connection', (socket: socketIO.Socket) => { SocketEvents(socket); });
+  io.on('connection', (socket: socketIO.Socket) => { SocketEvents(socket, Port, Parser); });
 
   server.route(Router);
 

@@ -3,9 +3,6 @@
  */
 
 import socketIO from 'socket.io';
-import SerialPort from 'serialport';
-import Readline from '@serialport/parser-readline';
-import * as Data from '../../config/Application.json';
 
 import {
   SocketResponse,
@@ -29,32 +26,23 @@ const onPortWrite = (socket: socketIO.Socket, port: any, gcode?: string) => {
   });
 };
 
-export default (socket: socketIO.Socket) => {
-  const Port = new SerialPort(Data.printer.connection.port,
-    {
-      baudRate: Data.printer.connection.baudrate,
-      autoOpen: false,
-    },
-  );
-  
-  const Parser = new Readline();
-
+export default (socket: socketIO.Socket, port: any, parser: any) => {
   socket.on('klipper_dash_connection', (message: string) => {
-    if (message === 'open') onPortWrite(socket, Port);
+    if (message === 'open') onPortWrite(socket, port);
   });
 
-  Port.pipe(Parser);
+  port.pipe(parser);
 
-  Parser.on('data', (line: any) => {
+  parser.on('data', (line: any) => {
     console.log(line);
     socket.emit('gcodeResponse', SocketResponse(200, line));
   });
 
   socket.on('gcode', (message: string) => {
-    onPortWrite(socket, Port, message);
+    onPortWrite(socket, port, message);
   });
 
-  Port.on('error', (err) => {
+  port.on('error', (err: any) => {
     socket.emit('gcodeResponse', SocketResponse(500, err.message));
   });
 };
