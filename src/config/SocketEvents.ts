@@ -17,7 +17,8 @@ export default (socket: socketIO.Socket, port: any, parser: any) => {
   socket.on('error', (err) => {
     console.log('Socket.IO Error: ', err.stack);
   });
-  socket.on('disconnect', () => {
+  socket.on('disconnecting', () => {
+    socket.disconnect(true);
     console.log(`socketId ${socket.id} disconnected`);
   });
 };
