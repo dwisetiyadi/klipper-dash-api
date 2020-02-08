@@ -33,16 +33,16 @@ export default (socket: socketIO.Socket, port: any, parser: any) => {
 
   port.pipe(parser);
 
-  parser.once('data', (line: any) => {
+  parser.on('data', (line: any) => {
     console.log(line);
     socket.emit('gcodeResponse', SocketResponse(200, line));
   });
 
-  socket.once('gcode', (message: string) => {
+  socket.on('gcode', (message: string) => {
     onPortWrite(socket, port, message);
   });
 
-  port.once('error', (err: any) => {
+  port.on('error', (err: any) => {
     socket.emit('gcodeResponse', SocketResponse(500, err.message));
   });
 };
