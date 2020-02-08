@@ -10,7 +10,7 @@ import "reflect-metadata";
 import socketIO from 'socket.io';
 import SerialPort from 'serialport';
 import Readline from '@serialport/parser-readline';
-import * as Data from '../../config/Application.json';
+import * as Data from '../config/Application.json';
 import {
   Plugins,
   Router,
