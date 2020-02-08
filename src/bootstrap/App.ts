@@ -50,7 +50,7 @@ const App = async (): Promise<void> => {
     pingTimeout: 120000,
   }).of(namespace);
   io.use((socket: socketIO.Socket, next) => { SocketMidlewares(socket, next); });
-  io.on('connection', (socket: socketIO.Socket) => { SocketEvents(socket, Port, Parser); });
+  io.once('connection', (socket: socketIO.Socket) => { SocketEvents(socket, Port, Parser); });
 
   server.route(Router);
 
