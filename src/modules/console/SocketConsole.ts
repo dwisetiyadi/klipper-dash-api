@@ -22,7 +22,7 @@ const onPortWrite = (socket: socketIO.Socket, port: any, gcode?: string) => {
 
     if (gcode) return port.write(`${gcode}\n`);
     socket.emit('gcodeResponse', SocketResponse(500, 'ok Klipper connected'));
-    console.log(gcode);
+    // console.log(gcode);
   });
 };
 
@@ -34,7 +34,7 @@ export default (socket: socketIO.Socket, port: any, parser: any) => {
   port.pipe(parser);
 
   parser.on('data', (line: any) => {
-    console.log(line);
+    // console.log(line);
     socket.emit('gcodeResponse', SocketResponse(200, line));
   });
 
