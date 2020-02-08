@@ -45,11 +45,11 @@ export default (socket: socketIO.Socket) => {
   Port.pipe(Parser);
 
   Parser.on('data', (line: any) => {
+    console.log(line);
     socket.emit('gcodeResponse', SocketResponse(200, line));
   });
 
   socket.on('gcode', (message: string) => {
-    console.log(message);
     onPortWrite(socket, Port, message);
   });
 
