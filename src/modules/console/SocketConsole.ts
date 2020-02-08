@@ -27,7 +27,7 @@ const onPortWrite = (socket: socketIO.Socket, port: any, gcode?: string) => {
 };
 
 export default (socket: socketIO.Socket, port: any, parser: any) => {
-  socket.once('klipper_dash_connection', (message: string) => {
+  socket.on('klipper_dash_connection', (message: string) => {
     if (message === 'open') onPortWrite(socket, port);
   });
 
@@ -38,7 +38,7 @@ export default (socket: socketIO.Socket, port: any, parser: any) => {
     socket.emit('gcodeResponse', SocketResponse(200, line));
   });
 
-  socket.once('gcode', (message: string) => {
+  socket.on('gcode', (message: string) => {
     onPortWrite(socket, port, message);
   });
 
