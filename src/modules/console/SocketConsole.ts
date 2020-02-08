@@ -27,6 +27,13 @@ const onPortWrite = (socket: socketIO.Socket, port: any, gcode?: string) => {
 };
 
 export default (socket: socketIO.Socket, port: any, parser: any) => {
+
+  socket.on('disconnect', () => {
+    socket.removeAllListeners('gcode');
+    socket.removeAllListeners('gcodeResponse');
+    console.log(`socketId ${socket.id} disconnected`);
+  });
+  
   socket.on('klipper_dash_connection', (message: string) => {
     if (message === 'open') onPortWrite(socket, port);
   });
