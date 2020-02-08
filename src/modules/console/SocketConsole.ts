@@ -33,8 +33,8 @@ const onPortWrite = (socket: socketIO.Socket, gcode?: string) => {
     }
 
     if (gcode) return Port.write(`${gcode}\n`);
-    console.log(gcode);
     socket.emit('gcodeResponse', SocketResponse(500, 'ok Klipper connected'));
+    console.log(gcode);
   });
 };
 
