@@ -11,13 +11,13 @@ export default (socket: socketIO.Socket, port: any, parser: any) => {
   // socket on modules
   SocketConsoleModule(socket, port, parser);
 
-  socket.on('end', (client) => {
+  socket.once('end', (client) => {
     socket.disconnect(client);
   });
-  socket.on('error', (err) => {
+  socket.once('error', (err) => {
     console.log('Socket.IO Error: ', err.stack);
   });
-  socket.on('disconnect', () => {
+  socket.once('disconnect', () => {
     console.log(`socketId ${socket.id} disconnected`);
   });
 };
