@@ -18,12 +18,8 @@ export default (socket: socketIO.Socket, port: any, parser: any) => {
     console.log('Socket.IO Error: ', err.stack);
   });
   socket.on('disconnect', () => {
-    socket.removeListener('gcode', () => {
-      console.log('ada');
-    });
-    socket.removeListener('gcodeResponse', () => {
-      console.log('ada');
-    });
+    socket.removeAllListeners('gcode');
+    socket.removeAllListeners('gcodeResponse');
     console.log(`socketId ${socket.id} disconnected`);
   });
 };
