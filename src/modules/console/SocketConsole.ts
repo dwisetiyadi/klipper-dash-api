@@ -38,7 +38,7 @@ export default (socket: socketIO.Socket, port: any, parser: any) => {
     socket.emit('gcodeResponse', SocketResponse(200, line));
   });
 
-  socket.on('gcode', (message: string) => {
+  socket.once('gcode', (message: string) => {
     onPortWrite(socket, port, message);
   });
 
