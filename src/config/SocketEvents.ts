@@ -5,6 +5,9 @@
 import socketIO from 'socket.io';
 import SocketConsoleModule from '../modules/console/SocketConsole';
 
+const sequenceNumberByClient = new Map();
+
+
 export default (socket: socketIO.Socket, port: any, parser: any) => {
   console.log(`socketId ${socket.id} connected`);
 
@@ -17,7 +20,8 @@ export default (socket: socketIO.Socket, port: any, parser: any) => {
   socket.on('error', (err) => {
     console.log('Socket.IO Error: ', err.stack);
   });
-  socket.on('disconnect', (reason) => {
-    console.log(`socketId ${socket.id} disconnected. ${reason}`);
+  socket.on('disconnect', () => {
+    sequenceNumberByClient.delete(socket);
+    console.log(`socketId ${socket.id} disconnected`);
   });
 };
