@@ -45,8 +45,12 @@ const App = async (): Promise<void> => {
   server.auth.default(STRATEGYNAME);
   
   const io = socketIO(server.listener).of((process.env.SOCKET_PATH) ? `/${process.env.SOCKET_PATH}` : '');
-  io.use((socket: socketIO.Socket, next) => { SocketMidlewares(socket, next); });
-  io.on('connection', (socket: socketIO.Socket) => { SocketEvents(socket, Port, Parser); });
+  io.use((socket: socketIO.Socket, next) => {
+    SocketMidlewares(socket, next);
+  });
+  io.on('connection', (socket: socketIO.Socket) => {
+    SocketEvents(socket, Port, Parser);
+  });
 
   server.route(Router);
 
