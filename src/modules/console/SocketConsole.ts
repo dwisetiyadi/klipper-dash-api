@@ -26,37 +26,28 @@ export default (socket: socketIO.Socket) => {
     if ([...err.message.matchAll(/Error: No such file or directory, cannot open/gm)].length > 0) return true;
     return false;
   };
-  const onPortWrite = (gcode?: string) => {
-    port.open((err: any) => {
-      if (err) {
-        const isPortConnectionError = onPortConnectionError(err);
-        if (isPortConnectionError) {
-          socket.emit('gcodeResponse', SocketResponse(500, err.message));
-          return;
-        }
-      }
-  
-      if (gcode) {
-        console.log(gcode);
-        port.write(`${gcode}\n`);
-        return;
-      }
-  
-      socket.emit('gcodeResponse', SocketResponse(500, 'ok Klipper connected'));
-      console.log(gcode);
-    });
-  };
 
   // socket and serial run
   socket.on('klipper_dash_connection', (message: string) => {
-    if (message === 'open') onPortWrite();
+    if (message === 'open') {
+      port.open((err: any) => {
+        if (err) {
+          const isPortConnectionError = onPortConnectionError(err);
+          if (isPortConnectionError) {
+            socket.emit('gcodeResponse', SocketResponse(500, err.message));
+            return;
+          }
+        }
+        socket.emit('gcodeResponse', SocketResponse(500, 'ok Klipper connected'));
+      });
+    }
   });
   port.pipe(parser);
   parser.on('data', (line: any) => {
     socket.emit('gcodeResponse', SocketResponse(200, line));
   });
   socket.on('gcode', (message: string) => {
-    onPortWrite(message);
+    port.write(`${message}\n`);
   });
   port.on('error', (err: any) => {
     socket.emit('gcodeResponse', SocketResponse(500, err.message));
