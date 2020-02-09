@@ -17,10 +17,18 @@ const onPortWrite = (socket: socketIO.Socket, port: any, gcode?: string) => {
   port.open((err: any) => {
     if (err) {
       const isPortConnectionError = onPortConnectionError(socket, err);
-      if (isPortConnectionError) return socket.emit('gcodeResponse', SocketResponse(500, err.message));
+      if (isPortConnectionError) {
+        socket.emit('gcodeResponse', SocketResponse(500, err.message));
+        return;
+      }
     }
 
-    if (gcode) return port.write(`${gcode}\n`);
+    if (gcode) {
+      console.log(gcode);
+      port.write(`${gcode}\n`);
+      return;
+    }
+
     socket.emit('gcodeResponse', SocketResponse(500, 'ok Klipper connected'));
     console.log(gcode);
   });
@@ -34,7 +42,6 @@ export default (socket: socketIO.Socket, port: any, parser: any) => {
   port.pipe(parser);
 
   parser.on('data', (line: any) => {
-    console.log(line);
     socket.emit('gcodeResponse', SocketResponse(200, line));
   });
 
