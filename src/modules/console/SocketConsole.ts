@@ -37,6 +37,7 @@ export default (socket: socketIO.Socket) => {
       }
   
       if (gcode) {
+        console.log(gcode);
         port.write(`${gcode}\n`);
         return;
       }
