@@ -17,6 +17,7 @@ export default (socket: socketIO.Socket, port: any, parser: any) => {
     ...clients,
     socket,
   ];
+  console.log('socket before disconnect: ', clients);
   socket.on('end', (client) => {
     socket.disconnect(client);
   });
@@ -25,7 +26,7 @@ export default (socket: socketIO.Socket, port: any, parser: any) => {
   });
   socket.on('disconnect', () => {
     clients = clients.filter(item => item !== socket);
-    console.log(clients);
+    console.log('socket after disconnect: ', clients);
     console.log(`socketId ${socket.id} disconnected`);
   });
 
