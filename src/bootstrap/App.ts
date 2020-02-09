@@ -50,6 +50,7 @@ const App = async (): Promise<void> => {
     });
     io.on('connection', (socket: socketIO.Socket) => {
       parser.on('data', (line: any) => {
+        console.log(line);
         socket.emit('gcodeResponse', SocketResponse(200, line));
       });
       SocketEvents(socket, port);
