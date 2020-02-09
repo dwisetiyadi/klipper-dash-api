@@ -11,7 +11,7 @@ export default (socket: socketIO.Socket, port: any, parser: any) => {
   console.log(`socketId ${socket.id} connected`);
 
   // socket on modules
-  SocketConsoleModule(socket, port, parser);
+  SocketConsoleModule(socket, port);
 
   socket.on('end', (client) => {
     socket.disconnect(client);
