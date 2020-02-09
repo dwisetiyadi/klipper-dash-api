@@ -13,19 +13,20 @@ import {
 
 export default (socket: socketIO.Socket) => {
   // serial port connection
-  const port = new SerialPort(Data.printer.connection.port,
-    {
-      baudRate: Data.printer.connection.baudrate,
-      autoOpen: false,
-    },
-  );
+  const port = new SerialPort(Data.printer.connection.port, (err: any) => {
+    if (err) {
+      if ([...err.message.matchAll(/Error: No such file or directory, cannot open/gm)].length > 0) {
+        socket.emit('gcodeResponse', SocketResponse(500, err.message));
+      }
+    }
+  });
   const parser = new Readline();
 
   // some helpers
-  const onPortConnectionError = (err: any) => {
-    if ([...err.message.matchAll(/Error: No such file or directory, cannot open/gm)].length > 0) return true;
-    return false;
-  };
+  // const onPortConnectionError = (err: any) => {
+  //   if ([...err.message.matchAll(/Error: No such file or directory, cannot open/gm)].length > 0) return true;
+  //   return false;
+  // };
 
   // socket and serial run
   port.pipe(parser);
@@ -33,8 +34,6 @@ export default (socket: socketIO.Socket) => {
     socket.emit('gcodeResponse', SocketResponse(200, line));
   });
   socket.on('gcode', (message: string) => {
-    port.open(() => {
-      port.write(`${message}\n`);
-    });
+    port.write(`${message}\n`);
   });
 };
