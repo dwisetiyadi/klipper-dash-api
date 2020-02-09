@@ -30,14 +30,7 @@ export default (socket: socketIO.Socket) => {
   // socket and serial run
   socket.on('klipper_dash_connection', (message: string) => {
     if (message === 'open') {
-      port.open((err: any) => {
-        if (err) {
-          const isPortConnectionError = onPortConnectionError(err);
-          if (isPortConnectionError) {
-            socket.emit('gcodeResponse', SocketResponse(500, err.message));
-            return;
-          }
-        }
+      port.open(() => {
         socket.emit('gcodeResponse', SocketResponse(500, 'ok Klipper connected'));
       });
     }
@@ -47,9 +40,8 @@ export default (socket: socketIO.Socket) => {
     socket.emit('gcodeResponse', SocketResponse(200, line));
   });
   socket.on('gcode', (message: string) => {
-    port.write(`${message}\n`);
-  });
-  port.on('error', (err: any) => {
-    socket.emit('gcodeResponse', SocketResponse(500, err.message));
+    port.on('open', () => {
+      port.write(`${message}\n`);
+    });
   });
 };
