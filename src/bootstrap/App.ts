@@ -48,7 +48,6 @@ const App = async (): Promise<void> => {
   const io = socketIO(server.listener, {
     pingInterval: 60000,
     pingTimeout: 120000,
-    cookie: false,
   }).of(namespace);
   io.use((socket: socketIO.Socket, next) => { SocketMidlewares(socket, next); });
   io.on('connection', (socket: socketIO.Socket) => { SocketEvents(socket, Port, Parser); });
