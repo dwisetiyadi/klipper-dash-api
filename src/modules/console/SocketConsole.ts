@@ -28,13 +28,6 @@ export default (socket: socketIO.Socket) => {
   };
 
   // socket and serial run
-  socket.on('klipper_dash_connection', (message: string) => {
-    if (message === 'open') {
-      port.open(() => {
-        socket.emit('gcodeResponse', SocketResponse(500, 'ok Klipper connected'));
-      });
-    }
-  });
   port.pipe(parser);
   parser.on('data', (line: any) => {
     socket.emit('gcodeResponse', SocketResponse(200, line));
