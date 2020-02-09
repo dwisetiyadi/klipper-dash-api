@@ -8,6 +8,9 @@ import * as Hapi from '@hapi/hapi';
 import 'dotenv/config';
 import "reflect-metadata";
 import socketIO from 'socket.io';
+import SerialPort from 'serialport';
+import Readline from '@serialport/parser-readline';
+import * as Data from './Application.json';
 import {
   Plugins,
   Router,
@@ -31,12 +34,18 @@ const App = async (): Promise<void> => {
   server.auth.strategy(STRATEGYNAME, STRATEGYSCHEME, STRATEGYOPTIONS);
   server.auth.default(STRATEGYNAME);
   
-  const io = socketIO(server.listener).of((process.env.SOCKET_PATH) ? `/${process.env.SOCKET_PATH}` : '');
-  io.use((socket: socketIO.Socket, next) => {
-    SocketMidlewares(socket, next);
+  const port = new SerialPort(Data.printer.connection.port, {
+    baudRate: 250000,
   });
-  io.on('connection', (socket: socketIO.Socket) => {
-    SocketEvents(socket);
+  const parser = new Readline();
+  const io = socketIO(server.listener).of((process.env.SOCKET_PATH) ? `/${process.env.SOCKET_PATH}` : '');
+  port.on('open', () => {
+    io.use((socket: socketIO.Socket, next) => {
+      SocketMidlewares(socket, next);
+    });
+    io.on('connection', (socket: socketIO.Socket) => {
+      SocketEvents(socket, port, parser);
+    });
   });
 
   server.route(Router);
