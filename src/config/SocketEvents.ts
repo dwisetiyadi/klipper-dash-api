@@ -8,7 +8,8 @@ import SocketConsoleModule from '../modules/console/SocketConsole';
 export default (socket: socketIO.Socket, port: any, parser: any) => {
   console.log(`socketId ${socket.id} connected`);
   console.log('rooms: ', socket.rooms);
-  console.log('listeners: ', socket.listeners);
+  console.log('listeners Gcode: ', socket.listeners('gcode'));
+  console.log('listeners Gcode Response: ', socket.listeners('gcodeResponse'));
 
   // socket on modules
   SocketConsoleModule(socket, port, parser);
