@@ -40,7 +40,7 @@ export default (socket: socketIO.Socket) => {
     socket.emit('gcodeResponse', SocketResponse(200, line));
   });
   socket.on('gcode', (message: string) => {
-    port.on('open', () => {
+    port.open(() => {
       port.write(`${message}\n`);
     });
   });
