@@ -38,8 +38,8 @@ const App = async (): Promise<void> => {
     baudRate: 250000,
   });
   const parser = new Readline();
-  const io = socketIO(server.listener).of((process.env.SOCKET_PATH) ? `/${process.env.SOCKET_PATH}` : '');
   port.on('open', () => {
+    const io = socketIO(server.listener).of((process.env.SOCKET_PATH) ? `/${process.env.SOCKET_PATH}` : '');
     io.use((socket: socketIO.Socket, next) => {
       SocketMidlewares(socket, next);
     });
