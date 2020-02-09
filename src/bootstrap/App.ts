@@ -16,7 +16,6 @@ import {
   SocketEvents,
   SocketMidlewares,
 } from '../config';
-// import { getConnectionMinio } from '../utilities';
 
 const App = async (): Promise<void> => {
   const server = new Hapi.Server({

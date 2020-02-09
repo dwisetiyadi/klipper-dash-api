@@ -11,32 +11,6 @@ import {
   SocketResponse,
 } from '../../utilities';
 
-const onPortConnectionError = (socket: socketIO.Socket, err: any) => {
-  if ([...err.message.matchAll(/Error: No such file or directory, cannot open/gm)].length > 0) return true;
-  return false;
-};
-
-const onPortWrite = (socket: socketIO.Socket, port: any, gcode?: string) => {
-  port.open((err: any) => {
-    if (err) {
-      const isPortConnectionError = onPortConnectionError(socket, err);
-      if (isPortConnectionError) {
-        socket.emit('gcodeResponse', SocketResponse(500, err.message));
-        return;
-      }
-    }
-
-    if (gcode) {
-      console.log(gcode);
-      port.write(`${gcode}\n`);
-      return;
-    }
-
-    socket.emit('gcodeResponse', SocketResponse(500, 'ok Klipper connected'));
-    console.log(gcode);
-  });
-};
-
 export default (socket: socketIO.Socket) => {
   const port = new SerialPort(Data.printer.connection.port,
     {
@@ -45,9 +19,33 @@ export default (socket: socketIO.Socket) => {
     },
   );
   const parser = new Readline();
+  const onPortConnectionError = (socket: socketIO.Socket, err: any) => {
+    if ([...err.message.matchAll(/Error: No such file or directory, cannot open/gm)].length > 0) return true;
+    return false;
+  };
+  const onPortWrite = (socket: socketIO.Socket, gcode?: string) => {
+    port.open((err: any) => {
+      if (err) {
+        const isPortConnectionError = onPortConnectionError(socket, err);
+        if (isPortConnectionError) {
+          socket.emit('gcodeResponse', SocketResponse(500, err.message));
+          return;
+        }
+      }
+  
+      if (gcode) {
+        console.log(gcode);
+        port.write(`${gcode}\n`);
+        return;
+      }
+  
+      socket.emit('gcodeResponse', SocketResponse(500, 'ok Klipper connected'));
+      console.log(gcode);
+    });
+  };
 
   socket.on('klipper_dash_connection', (message: string) => {
-    if (message === 'open') onPortWrite(socket, port);
+    if (message === 'open') onPortWrite(socket);
   });
 
   port.pipe(parser);
@@ -57,7 +55,7 @@ export default (socket: socketIO.Socket) => {
   });
 
   socket.on('gcode', (message: string) => {
-    onPortWrite(socket, port, message);
+    onPortWrite(socket, message);
   });
 
   port.on('error', (err: any) => {
