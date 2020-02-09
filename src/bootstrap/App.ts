@@ -44,11 +44,7 @@ const App = async (): Promise<void> => {
   server.auth.strategy(STRATEGYNAME, STRATEGYSCHEME, STRATEGYOPTIONS);
   server.auth.default(STRATEGYNAME);
   
-  const namespace = (process.env.SOCKET_PATH) ? `/${process.env.SOCKET_PATH}` : '';
-  const io = socketIO(server.listener, {
-    pingInterval: 60000,
-    pingTimeout: 120000,
-  }).of(namespace);
+  const io = socketIO(server.listener).of((process.env.SOCKET_PATH) ? `/${process.env.SOCKET_PATH}` : '');
   io.use((socket: socketIO.Socket, next) => { SocketMidlewares(socket, next); });
   io.on('connection', (socket: socketIO.Socket) => { SocketEvents(socket, Port, Parser); });
 

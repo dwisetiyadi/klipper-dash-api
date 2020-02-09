@@ -26,25 +26,23 @@ const onPortWrite = (socket: socketIO.Socket, port: any, gcode?: string) => {
   });
 };
 
-export default (sockets: any, port: any, parser: any) => {
-  sockets.forEach((socket: socketIO.Socket) => {
-    console.log(socket.id);
-    socket.on('klipper_dash_connection', (message: string) => {
-      if (message === 'open') onPortWrite(socket, port);
-    });
+export default (socket: socketIO.Socket, port: any, parser: any) => {
+  socket.on('klipper_dash_connection', (message: string) => {
+    if (message === 'open') onPortWrite(socket, port);
+  });
 
-    port.pipe(parser);
+  port.pipe(parser);
 
-    parser.on('data', (line: any) => {
-      socket.emit('gcodeResponse', SocketResponse(200, line));
-    });
+  parser.on('data', (line: any) => {
+    console.log(line);
+    socket.emit('gcodeResponse', SocketResponse(200, line));
+  });
 
-    socket.on('gcode', (message: string) => {
-      onPortWrite(socket, port, message);
-    });
+  socket.on('gcode', (message: string) => {
+    onPortWrite(socket, port, message);
+  });
 
-    port.on('error', (err: any) => {
-      socket.emit('gcodeResponse', SocketResponse(500, err.message));
-    });
+  port.on('error', (err: any) => {
+    socket.emit('gcodeResponse', SocketResponse(500, err.message));
   });
 };
