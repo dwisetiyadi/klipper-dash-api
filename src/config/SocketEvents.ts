@@ -18,9 +18,6 @@ export default (socket: socketIO.Socket, port: any, parser: any) => {
     socket,
   ];
 
-  // socket on modules
-  SocketConsoleModule(clients, port, parser);
-
   socket.on('end', (client) => {
     socket.disconnect(client);
   });
@@ -29,7 +26,11 @@ export default (socket: socketIO.Socket, port: any, parser: any) => {
   });
   socket.on('disconnect', () => {
     clients = clients.filter(item => item !== socket);
-    console.log('socket after disconnect: ', clients);
+    console.log('socket after disconnect: ', clients.length);
     console.log(`socketId ${socket.id} disconnected`);
   });
+
+  // socket on modules
+  console.log('current socket: ', clients.length);
+  SocketConsoleModule(clients, port, parser);
 };
