@@ -28,6 +28,7 @@ const onPortWrite = (socket: socketIO.Socket, port: any, gcode?: string) => {
 
 export default (sockets: any, port: any, parser: any) => {
   sockets.forEach((socket: socketIO.Socket) => {
+    console.log(socket.id);
     socket.on('klipper_dash_connection', (message: string) => {
       if (message === 'open') onPortWrite(socket, port);
     });
