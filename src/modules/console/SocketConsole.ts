@@ -9,12 +9,14 @@ import {
 } from '../../utilities';
 
 export default (socket: socketIO.Socket, port: any, parser: any) => {
+  port.pipe(parser);
+  parser.on('data', (line: any) => {
+    console.log(line);
+    socket.emit('gcodeResponse', SocketResponse(200, line));
+  });
   socket.on('gcode', (message: string) => {
-    port.pipe(parser);
-    parser.on('data', (line: any) => {
-      console.log(line);
-      socket.emit('gcodeResponse', SocketResponse(200, line));
+    port.on('open', () => {
+      port.write(`${message}\n`);
     });
-    port.write(`${message}\n`);
   });
 };
