@@ -52,10 +52,6 @@ const App = async (): Promise<void> => {
       parser.on('data', (line: any) => {
         socket.emit('gcodeResponse', SocketResponse(200, line));
       });
-      port.on('readable', function () {
-        console.log('Data:', port.read());
-        socket.emit('gcodeResponse', SocketResponse(200, port.read()));
-      });
       SocketEvents(socket, port);
     });
   });
