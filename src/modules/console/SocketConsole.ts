@@ -3,6 +3,9 @@
  */
 
 import socketIO from 'socket.io';
+import SerialPort from 'serialport';
+import Readline from '@serialport/parser-readline';
+import * as Data from '../../config/Application.json';
 
 import {
   SocketResponse,
@@ -34,7 +37,15 @@ const onPortWrite = (socket: socketIO.Socket, port: any, gcode?: string) => {
   });
 };
 
-export default (socket: socketIO.Socket, port: any, parser: any) => {
+export default (socket: socketIO.Socket) => {
+  const port = new SerialPort(Data.printer.connection.port,
+    {
+      baudRate: Data.printer.connection.baudrate,
+      autoOpen: false,
+    },
+  );
+  const parser = new Readline();
+
   socket.on('klipper_dash_connection', (message: string) => {
     if (message === 'open') onPortWrite(socket, port);
   });
