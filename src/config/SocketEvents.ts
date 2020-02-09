@@ -6,12 +6,12 @@ import socketIO from 'socket.io';
 
 import SocketConsoleModule from '../modules/console/SocketConsole';
 
-export default (socket: socketIO.Socket, port: any, parser: any) => {
+export default (socket: socketIO.Socket, port: any) => {
 
   console.log(`socketId ${socket.id} connected`);
 
   // socket on modules
-  SocketConsoleModule(socket, port, parser);
+  SocketConsoleModule(socket, port);
 
   socket.on('end', (client) => {
     socket.disconnect(client);

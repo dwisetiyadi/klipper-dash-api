@@ -20,6 +20,10 @@ import {
   SocketMidlewares,
 } from '../config';
 
+import {
+  SocketResponse,
+} from '../utilities';
+
 const App = async (): Promise<void> => {
   const server = new Hapi.Server({
     host: process.env.HOST,
@@ -44,7 +48,12 @@ const App = async (): Promise<void> => {
       SocketMidlewares(socket, next);
     });
     io.on('connection', (socket: socketIO.Socket) => {
-      SocketEvents(socket, port, parser);
+      port.pipe(parser);
+      parser.on('data', (line: any) => {
+        console.log(line);
+        socket.emit('gcodeResponse', SocketResponse(200, line));
+      });
+      SocketEvents(socket, port);
     });
   });
 
