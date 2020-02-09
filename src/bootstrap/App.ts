@@ -48,7 +48,7 @@ const App = async (): Promise<void> => {
       SocketMidlewares(socket, next);
     });
     io.on('connection', (socket: socketIO.Socket) => {
-      port.pipe(parser);
+      // port.pipe(parser);
       parser.on('data', (line: any) => {
         console.log(line);
         socket.emit('gcodeResponse', SocketResponse(200, line));
