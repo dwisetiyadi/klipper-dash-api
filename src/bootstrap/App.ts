@@ -51,7 +51,7 @@ const App = async (): Promise<void> => {
     cookie: false,
   }).of(namespace);
   io.use((socket: socketIO.Socket, next) => { SocketMidlewares(socket, next); });
-  io.on('connection', (socket: socketIO.Socket) => { SocketEvents(socket, Port, Parser); });
+  io.once('connection', (socket: socketIO.Socket) => { SocketEvents(socket, Port, Parser); });
 
   server.route(Router);
 
