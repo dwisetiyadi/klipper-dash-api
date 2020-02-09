@@ -22,14 +22,14 @@ export default (socket: socketIO.Socket) => {
   const parser = new Readline();
 
   // some helpers
-  const onPortConnectionError = (socket: socketIO.Socket, err: any) => {
+  const onPortConnectionError = (err: any) => {
     if ([...err.message.matchAll(/Error: No such file or directory, cannot open/gm)].length > 0) return true;
     return false;
   };
-  const onPortWrite = (socket: socketIO.Socket, gcode?: string) => {
+  const onPortWrite = (gcode?: string) => {
     port.open((err: any) => {
       if (err) {
-        const isPortConnectionError = onPortConnectionError(socket, err);
+        const isPortConnectionError = onPortConnectionError(err);
         if (isPortConnectionError) {
           socket.emit('gcodeResponse', SocketResponse(500, err.message));
           return;
@@ -48,14 +48,14 @@ export default (socket: socketIO.Socket) => {
 
   // socket and serial run
   socket.on('klipper_dash_connection', (message: string) => {
-    if (message === 'open') onPortWrite(socket);
+    if (message === 'open') onPortWrite();
   });
   port.pipe(parser);
   parser.on('data', (line: any) => {
     socket.emit('gcodeResponse', SocketResponse(200, line));
   });
   socket.on('gcode', (message: string) => {
-    onPortWrite(socket, message);
+    onPortWrite(message);
   });
   port.on('error', (err: any) => {
     socket.emit('gcodeResponse', SocketResponse(500, err.message));
