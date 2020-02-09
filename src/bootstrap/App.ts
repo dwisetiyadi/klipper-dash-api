@@ -39,17 +39,19 @@ const App = async (): Promise<void> => {
   const port = new SerialPort(Data.printer.connection.port, {
     baudRate: 250000,
   });
-  // const parser = new Readline();
+  const parser = port.pipe(new Readline({
+    delimiter: '|',
+    encoding: 'utf8',
+  }));
   port.on('open', () => {
     const io = socketIO(server.listener).of((process.env.SOCKET_PATH) ? `/${process.env.SOCKET_PATH}` : '');
     io.use((socket: socketIO.Socket, next) => {
       SocketMidlewares(socket, next);
     });
     io.on('connection', (socket: socketIO.Socket) => {
-      // port.pipe(parser);
-      // parser.on('data', (line: any) => {
-      //   socket.emit('gcodeResponse', SocketResponse(200, line));
-      // });
+      parser.on('data', (line: any) => {
+        socket.emit('gcodeResponse', SocketResponse(200, line));
+      });
       port.on('readable', function () {
         console.log('Data:', port.read());
         socket.emit('gcodeResponse', SocketResponse(200, port.read()));
