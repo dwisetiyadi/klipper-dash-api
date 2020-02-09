@@ -46,9 +46,6 @@ const App = async (): Promise<void> => {
   
   const namespace = (process.env.SOCKET_PATH) ? `/${process.env.SOCKET_PATH}` : '';
   const io = socketIO(server.listener, {
-    pingInterval: 60000,
-    pingTimeout: 120000,
-    cookie: false,
     transports: ['websocket'],
   }).of(namespace);
   io.use((socket: socketIO.Socket, next) => { SocketMidlewares(socket, next); });
