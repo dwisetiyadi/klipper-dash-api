@@ -12,6 +12,7 @@ import {
 } from '../../utilities';
 
 export default (socket: socketIO.Socket) => {
+  // serial port connection
   const port = new SerialPort(Data.printer.connection.port,
     {
       baudRate: Data.printer.connection.baudrate,
@@ -19,6 +20,8 @@ export default (socket: socketIO.Socket) => {
     },
   );
   const parser = new Readline();
+
+  // some helpers
   const onPortConnectionError = (socket: socketIO.Socket, err: any) => {
     if ([...err.message.matchAll(/Error: No such file or directory, cannot open/gm)].length > 0) return true;
     return false;
@@ -43,20 +46,17 @@ export default (socket: socketIO.Socket) => {
     });
   };
 
+  // socket and serial run
   socket.on('klipper_dash_connection', (message: string) => {
     if (message === 'open') onPortWrite(socket);
   });
-
   port.pipe(parser);
-
   parser.on('data', (line: any) => {
     socket.emit('gcodeResponse', SocketResponse(200, line));
   });
-
   socket.on('gcode', (message: string) => {
     onPortWrite(socket, message);
   });
-
   port.on('error', (err: any) => {
     socket.emit('gcodeResponse', SocketResponse(500, err.message));
   });
