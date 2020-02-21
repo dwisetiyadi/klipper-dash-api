@@ -4,6 +4,8 @@
 
 import socketIO from 'socket.io';
 
+import { SocketResponse } from '../utilities';
+
 import SocketConsoleModule from '../modules/console/SocketConsole';
 
 export default (socket: socketIO.Socket, port: any) => {
@@ -18,6 +20,7 @@ export default (socket: socketIO.Socket, port: any) => {
   });
   socket.on('error', (err) => {
     console.log('Socket.IO Error: ', err.stack);
+    socket.emit('gcodeResponse', SocketResponse(500, err.stack));
   });
   socket.once('disconnect', () => {
     console.log(`socketId ${socket.id} disconnected`);
