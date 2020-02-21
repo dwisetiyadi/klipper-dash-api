@@ -15,6 +15,7 @@ export default (socket: socketIO.Socket, next: any) => {
     if (!person) return next();
     throw 'authentication error';
   } catch(error) {
+    console.log(error);
     return next(new Error(error));
   }
 };
