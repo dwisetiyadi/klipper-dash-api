@@ -3,9 +3,19 @@
  */
 
 import socketIO from 'socket.io';
+const exec = require('child_process').exec;
 
 export default (socket: socketIO.Socket, port: any) => {
   socket.on('gcode', (message: string) => {
-    port.write(`${message}\n`);
+    switch (message) {
+      case 'shutdown':
+      case 'SHUTDOWN':
+        exec('sudo shutdown -h now');
+        break;
+    
+      default:
+        port.write(`${message}\n`);
+        break;
+    }
   });
 };
