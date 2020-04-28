@@ -17,6 +17,11 @@ export default (socket: socketIO.Socket, port: any) => {
       case 'REBOOT':
         exec('sudo shutdown -r now');
         break;
+
+      case 'klipper_restart':
+      case 'KLIPPER_RESTART':
+        exec('sudo service klipper stop && sudo service klipper start');
+        break;
     
       default:
         port.write(`${message}\n`);
