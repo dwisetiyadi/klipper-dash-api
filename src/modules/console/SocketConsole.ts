@@ -12,6 +12,11 @@ export default (socket: socketIO.Socket, port: any) => {
       case 'SHUTDOWN':
         exec('sudo shutdown -h now');
         break;
+
+      case 'reboot':
+      case 'REBOOT':
+        exec('sudo shutdown -r now');
+        break;
     
       default:
         port.write(`${message}\n`);
