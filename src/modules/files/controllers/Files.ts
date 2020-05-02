@@ -20,11 +20,15 @@ class Files {
 
     const files = fs.readdirSync(pathUpload)
       .map((file) => {
+        const stat = fs.statSync(`${pathUpload}/${file}`);
         return {
           filename: file,
-          stat: fs.statSync(`${pathUpload}/${file}`),
+          ext: path.extname(`${pathUpload}/${file}`),
+          size: stat.size,
+          created: stat.birthtime,
         };
-      });
+      })
+      .filter((file) => file.ext === 'gcode');
     console.log(pathUpload, files, fs.existsSync(pathUpload));
     return HttpResponse(200, files, res);
   }
