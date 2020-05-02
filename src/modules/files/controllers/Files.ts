@@ -27,8 +27,8 @@ class Files {
           size: stat.size,
           created: stat.birthtime,
         };
-      })
-      .filter((file) => file.ext === 'gcode');
+      });
+      // .filter((file) => file.ext === 'gcode');
     console.log(pathUpload, files, fs.existsSync(pathUpload));
     return HttpResponse(200, files, res);
   }
