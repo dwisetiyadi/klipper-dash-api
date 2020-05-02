@@ -10,6 +10,7 @@ export default {
     'Content-Type',
     'Accept',
     'information',
+    'authorization',
   ],
   exposedHeaders: [
     'Accept',
