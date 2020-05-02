@@ -12,7 +12,6 @@ class Dashboard {
 
   /**
    * do not use "any" for "req" and "res". Default for "res" is Hapi.ResponseToolkit.
-   * but you could extend and override it in new interface, like used in "req"
    */
   static welcome = async (
     req: Hapi.Request, res: Hapi.ResponseToolkit,
