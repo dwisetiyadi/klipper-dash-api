@@ -18,7 +18,13 @@ class Files {
       fs.mkdirpSync(pathUpload);
     }
 
-    const files = fs.readdirSync(pathUpload);
+    const files = fs.readdirSync(pathUpload)
+      .map((file) => {
+        return {
+          filename: file,
+          stat: fs.statSync(`${pathUpload}/${file}`),
+        };
+      });
     console.log(pathUpload, files, fs.existsSync(pathUpload));
     return HttpResponse(200, files, res);
   }
