@@ -21,7 +21,7 @@ const Routes = [
     path: '/file/{gcode}',
     handler: {
       file: {
-        path: (req: Hapi.Request, res: Hapi.ResponseToolkit): string => Files.read(req),
+        path: (req: Hapi.Request): string => Files.read(req),
       },
       confine: false,
     },
