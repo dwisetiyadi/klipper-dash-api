@@ -10,7 +10,7 @@ import {
 
 class Files {
   static listing = async (req: Hapi.Request, res: Hapi.ResponseToolkit): Promise<object> => {
-    const path = '~/uploads';
+    const path = '~/uploads/';
 
     if (!fs.existsSync(path)) {
       fs.mkdirpSync(path);
