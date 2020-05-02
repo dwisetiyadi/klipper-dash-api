@@ -19,10 +19,9 @@ const Routes = [
   {
     method: 'GET',
     path: '/file/{gcode}',
-    config: {
-      confine: false,
+    handler: {
+      file: (req: Hapi.Request, res: Hapi.ResponseToolkit): object => Files.read(req, res),
     },
-    handler: (req: Hapi.Request, res: Hapi.ResponseToolkit): object => Files.read(req, res),
   },
   {
     method: 'DELETE',
