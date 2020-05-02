@@ -30,7 +30,7 @@ class Files {
           created: stat.birthtime,
         };
       })
-      .filter((file) => file.ext === 'gcodea');
+      .filter((file) => file.ext === 'gcode');
       
     return HttpResponse(200, files, res);
   }
