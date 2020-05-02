@@ -17,7 +17,7 @@ class Files {
     }
 
     const files = fs.readdirSync(path);
-    console.log(files);
+    console.log(fs.existsSync(path));
     return HttpResponse(200, files, res);
   }
 };
