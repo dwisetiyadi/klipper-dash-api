@@ -29,8 +29,8 @@ class Files {
           size: stat.size,
           created: stat.birthtime,
         };
-      })
-      .filter((file) => file.ext === 'gcode');
+      });
+      // .filter((file) => file.ext === 'gcode');
       
     return HttpResponse(200, files, res);
   }
