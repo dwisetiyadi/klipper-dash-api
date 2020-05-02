@@ -7,9 +7,7 @@ import { HttpResponse, sha256, generateToken } from '../../../utilities';
 import * as Data from '../../../config/Application.json';
 
 class Auths {
-  static signIn = async (
-    req: any, res: Hapi.ResponseToolkit,
-  ): Promise<object> => {
+  static signIn = (req: any, res: Hapi.ResponseToolkit) => {
     try {
       const failedMessage = { message: 'Wrong combination username and password.' };
 
@@ -34,7 +32,7 @@ class Auths {
       if (error.message) return HttpResponse(400, error.message, res);
       return HttpResponse(500, error, res);
     }
-  }
+  };
 }
 
 export default Auths;

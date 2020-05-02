@@ -13,9 +13,7 @@ class Dashboard {
   /**
    * do not use "any" for "req" and "res". Default for "res" is Hapi.ResponseToolkit.
    */
-  static welcome = async (
-    req: Hapi.Request, res: Hapi.ResponseToolkit,
-  ): Promise<object> => {
+  static welcome = (req: Hapi.Request, res: Hapi.ResponseToolkit) => {
 
     /**
      * this is the convention that used in this application.
