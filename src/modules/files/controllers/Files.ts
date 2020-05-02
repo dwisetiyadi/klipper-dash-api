@@ -35,12 +35,8 @@ class Files {
     return HttpResponse(200, files, res);
   };
 
-  static read = (req: Hapi.Request, res: any) => {
-    const gcode = `${pathUpload}/${req.params.gcode}`;
-    return {
-      path: gcode,
-      confine: false,
-    };
+  static read = (req: Hapi.Request) => {
+    return `${pathUpload}/${req.params.gcode}`;
   };
 };
 

@@ -11,23 +11,26 @@ const Routes = [
     path: '/files',
     handler: (req: Hapi.Request, res: Hapi.ResponseToolkit): object => Files.listing(req, res),
   },
-  {
-    method: 'POST',
-    path: '/file',
-    handler: (req: Hapi.Request, res: Hapi.ResponseToolkit): object => Files.read(req, res),
-  },
+  // {
+  //   method: 'POST',
+  //   path: '/file',
+  //   handler: (req: Hapi.Request, res: Hapi.ResponseToolkit): object => Files.read(req, res),
+  // },
   {
     method: 'GET',
     path: '/file/{gcode}',
     handler: {
-      file: (req: Hapi.Request, res: Hapi.ResponseToolkit): object => Files.read(req, res),
+      file: {
+        path: (req: Hapi.Request, res: Hapi.ResponseToolkit): string => Files.read(req),
+      },
+      confine: false,
     },
   },
-  {
-    method: 'DELETE',
-    path: '/file/{gcode}',
-    handler: (req: Hapi.Request, res: Hapi.ResponseToolkit): object => Files.read(req, res),
-  },
+  // {
+  //   method: 'DELETE',
+  //   path: '/file/{gcode}',
+  //   handler: (req: Hapi.Request, res: Hapi.ResponseToolkit): object => Files.read(req, res),
+  // },
 ];
 
 export default Routes;
