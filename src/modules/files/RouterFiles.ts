@@ -22,8 +22,8 @@ const Routes = [
     handler: {
       file: {
         path: (req: Hapi.Request): string => Files.read(req),
+        confine: false,
       },
-      confine: false,
     },
   },
   // {
