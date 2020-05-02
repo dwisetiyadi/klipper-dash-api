@@ -21,15 +21,17 @@ class Files {
     const files = fs.readdirSync(pathUpload)
       .map((file) => {
         const stat = fs.statSync(`${pathUpload}/${file}`);
+        const ext = path.extname(`${pathUpload}/${file}`);
         return {
-          filename: file,
-          ext: path.extname(`${pathUpload}/${file}`),
+          fullname: file,
+          filename: file.replace(ext, ''),
+          ext: ext.replace('.', ''),
           size: stat.size,
           created: stat.birthtime,
         };
-      });
-      // .filter((file) => file.ext === 'gcode');
-    console.log(pathUpload, files, fs.existsSync(pathUpload));
+      })
+      .filter((file) => file.ext === 'gcode');
+      
     return HttpResponse(200, files, res);
   }
 };
