@@ -9,8 +9,8 @@ export default {
     'X-Requested-With',
     'Content-Type',
     'Accept',
+    'Authorization',
     'information',
-    'authorization',
   ],
   exposedHeaders: [
     'Accept',
