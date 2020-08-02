@@ -9,6 +9,8 @@
     "stop": "pm2 stop ecosystem.config.js",
     "delete": "pm2 delete ecosystem.config.js",
     "restart": "tsc && pm2 restart ecosystem.config.js",
+    "startup": "pm2 startup",
+    "unstartup": "pm2 unstartup",
     "postinstall": "node ./bin/postinstall.js && npm run precommit",
     "precommit": "rimraf .git/hooks/pre-commit.sample && rimraf .git/hooks/pre-commit && shx cp ./pre-commit .git/hooks/pre-commit && shx chmod +x .git/hooks/pre-commit",
     "test": "echo \"Error: no test specified\" && exit 1"
