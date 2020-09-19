@@ -19,5 +19,5 @@ export default (socket: socketIO.Socket, next: any) => {
   //   return next(new Error(error));
   // }
   socket.emit('gcodeResponse', SocketResponse(500, 'test error'));
-  return next(new Error('test error'));
+  // return next(new Error('test error'));
 };
