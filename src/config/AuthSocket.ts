@@ -4,7 +4,7 @@
 
 import socketIO from 'socket.io';
 import * as Data from './Application.json';
-import { decodeToken } from '../utilities';
+import { decodeToken, SocketResponse } from '../utilities';
 
 export default (socket: socketIO.Socket, next: any) => {
   // try {
@@ -18,5 +18,6 @@ export default (socket: socketIO.Socket, next: any) => {
   //   console.log(error);
   //   return next(new Error(error));
   // }
+  socket.emit('gcodeResponse', SocketResponse(500, 'test error'));
   return next(new Error('test error'));
 };
